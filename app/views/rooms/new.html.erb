@@ -1,0 +1,20 @@
+<% content_for :title, "Type Duel — 1v1 タイピング対戦" %>
+
+<section class="hero">
+  <h1 class="logo">⌨️ Type&nbsp;Duel</h1>
+  <p class="tagline">表示されたお題を、相手より速く正確に打ち切ったほうが勝ち。</p>
+
+  <%= form_with url: rooms_path, method: :post, class: "card form" do |f| %>
+    <label class="field-label" for="nickname">ニックネーム</label>
+    <%= f.text_field :nickname, id: "nickname", maxlength: 20, autofocus: true,
+          autocomplete: "off", placeholder: "あなたの名前", class: "text-input" %>
+    <%= f.submit "部屋を作る", class: "btn btn-primary" %>
+  <% end %>
+
+  <ol class="how-to">
+    <li>ニックネームを入れて「部屋を作る」</li>
+    <li>共有 URL を対戦相手に送る</li>
+    <li>2 人揃ったらホストが「スタート」</li>
+    <li>お題を先に正しく打ち切ったほうが勝ち！</li>
+  </ol>
+</section>

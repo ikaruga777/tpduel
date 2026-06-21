@@ -1,0 +1,13 @@
+<div class="player-card" data-player-id="<%= player.id %>">
+  <div class="player-top">
+    <span class="player-name">
+      <%= player.nickname %>
+      <% if player.host? %><span class="badge">HOST</span><% end %>
+      <% if player.id == me.id %><span class="badge badge-you">YOU</span><% end %>
+    </span>
+    <span class="player-pct" data-player-pct>0%</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-bar" data-player-bar style="width: 0%"></div>
+  </div>
+</div>
