@@ -1,0 +1,75 @@
+<% content_for :title, "Type Duel — 部屋 #{@room.code}" %>
+
+<% if @player.nil? %>
+  <%# ---- Newcomer: join form ---------------------------------------------- %>
+  <section class="hero">
+    <h1 class="logo">⌨️ Type&nbsp;Duel</h1>
+    <% if @room.full? %>
+      <p class="tagline">この部屋はすでに満員です。</p>
+      <%= link_to "トップにもどる", root_path, class: "btn btn-primary" %>
+    <% else %>
+      <p class="tagline">部屋 <strong><%= @room.code %></strong> に招待されました。</p>
+      <%= form_with url: join_room_path(@room.code), method: :post, class: "card form" do |f| %>
+        <label class="field-label" for="nickname">ニックネーム</label>
+        <%= f.text_field :nickname, id: "nickname", maxlength: 20, autofocus: true,
+              autocomplete: "off", placeholder: "あなたの名前", class: "text-input" %>
+        <%= f.submit "入室する", class: "btn btn-primary" %>
+      <% end %>
+    <% end %>
+  </section>
+<% else %>
+  <%# ---- Player: game board ------------------------------------------------ %>
+  <section
+    class="game"
+    data-controller="game"
+    data-game-code-value="<%= @room.code %>"
+    data-game-player-id-value="<%= @player.id %>"
+    data-game-host-value="<%= @player.host? %>"
+    data-game-countdown-seconds-value="<%= Room::COUNTDOWN_SECONDS %>"
+  >
+    <header class="game-header">
+      <span class="room-tag">部屋コード <strong><%= @room.code %></strong></span>
+      <div class="share" data-controller="clipboard"
+           data-clipboard-text-value="<%= room_url(@room.code) %>">
+        <input type="text" readonly class="share-input"
+               value="<%= room_url(@room.code) %>"
+               data-clipboard-target="source">
+        <button type="button" class="btn btn-ghost"
+                data-action="clipboard#copy"
+                data-clipboard-target="button">URLをコピー</button>
+      </div>
+    </header>
+
+    <div class="players" data-game-target="players">
+      <% @room.players.order(:created_at).each do |player| %>
+        <%= render "player", player: player, me: @player %>
+      <% end %>
+    </div>
+
+    <div class="status-line" data-game-target="status">対戦相手を待っています…</div>
+
+    <div class="countdown hidden" data-game-target="countdown"></div>
+
+    <div class="prompt hidden" data-game-target="prompt"></div>
+
+    <textarea
+      class="typing-input hidden"
+      data-game-target="input"
+      data-action="input->game#onInput paste->game#blockPaste"
+      autocomplete="off" autocorrect="off" autocapitalize="off"
+      spellcheck="false" rows="3"
+      placeholder="ここに入力…"></textarea>
+
+    <div class="result hidden" data-game-target="result"></div>
+
+    <div class="controls">
+      <% if @player.host? %>
+        <button type="button" class="btn btn-primary"
+                data-game-target="startBtn"
+                data-action="game#start" disabled>スタート</button>
+      <% else %>
+        <span class="hint" data-game-target="hostHint">ホストの開始を待っています…</span>
+      <% end %>
+    </div>
+  </section>
+<% end %>
